@@ -33,14 +33,12 @@ import Prelude
 import Data.Foldable (class Foldable)
 import Data.Foldable as Foldable
 import Data.Monoid (mempty)
--- import Crypto.Simple as Crypto
+import Crypto.Simple as Crypto
 import Data.Int (even)
 import Data.Int.Bits ((.&.), shl, shr)
 import Data.List (List(..), (:))
 import Data.List as List
 
--- temporary
-foreign import hashWith :: String -> String -> String
 
 newtype MerkleRoot a = MerkleRoot String
 
@@ -99,12 +97,8 @@ emptyHash :: forall a. MerkleRoot a
 emptyHash = MerkleRoot (merkleHash "")
 
 
--- merkleHash :: String -> String
--- merkleHash = Crypto.hash Crypto.SHA256
-
 merkleHash :: String -> String
-merkleHash = hashWith "sha256"
-
+merkleHash = Crypto.hash Crypto.SHA256
 
 
 -- | Merkle tree height
