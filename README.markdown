@@ -23,3 +23,7 @@ main = do
     mleaf = MT.mkLeafRootHash "tx2"
     proof = MT.merkleProof mtree mleaf
 ```
+
+### Documentation
+
+Module documentation is [published on Pursuit](http://pursuit.purescript.org/packages/purescript-merkle-tree).
