@@ -28,13 +28,11 @@ module Crypto.Hash.MerkleTree
   ) where
 
 
--- https://pursuit.purescript.org/packages/purescript-decimals/3.1.0
-
 import Prelude
 
--- import Data.Foldable (class Foldable)
--- import Data.Foldable as Foldable
--- import Data.Monoid (mempty)
+import Data.Foldable (class Foldable)
+import Data.Foldable as Foldable
+import Data.Monoid (mempty)
 -- import Crypto.Simple as Crypto
 import Data.Int (even)
 import Data.Int.Bits ((.&.), shl, shr)
@@ -63,19 +61,20 @@ data MerkleNode a
     , mVal  :: a
   }
 
--- instance foldableMerkleTree :: Foldable MerkleTree where
---   foldr = Foldable.foldrDefault
---   foldl = Foldable.foldlDefault
---   foldMap _ MerkleEmpty      = mempty
---   foldMap f (MerkleTree _ n) = Foldable.foldMap f n
---
--- instance foldableMerkleNode :: Foldable MerkleNode where
---   foldr = Foldable.foldrDefault
---   foldl = Foldable.foldlDefault
---   foldMap f x = case x of
---     MerkleLeaf{mVal}            -> f mVal
---     MerkleBranch{mLeft, mRight} ->
---       Foldable.foldMap f mLeft `append` Foldable.foldMap f mRight
+instance foldableMerkleTree :: Foldable MerkleTree where
+  foldr f a b = Foldable.foldrDefault f a b
+  foldl f a b = Foldable.foldlDefault f a b
+  foldMap _ MerkleEmpty      = mempty
+  foldMap f (MerkleTree _ n) = Foldable.foldMap f n
+
+instance foldableMerkleNode :: Foldable MerkleNode where
+  foldr f a b = Foldable.foldrDefault f a b
+  foldl f a b = Foldable.foldlDefault f a b
+  foldMap f x = case x of
+    MerkleLeaf{mVal}            -> f mVal
+    MerkleBranch{mLeft, mRight} ->
+      Foldable.foldMap f mLeft `append` Foldable.foldMap f mRight
+
 
 
 -- | Returns root of merkle tree.
