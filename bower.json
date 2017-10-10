@@ -16,7 +16,7 @@
     "purescript-lists": "^4.10.0",
     "purescript-foldable-traversable": "^3.6.1",
     "purescript-integers": "^3.1.0",
-    "purescript-simplecrypto": "^0.0.5"
+    "purescript-simplecrypto": "^0.0.7"
   },
   "devDependencies": {
     "purescript-psci-support": "^3.0.0",

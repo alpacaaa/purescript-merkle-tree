@@ -98,7 +98,8 @@ emptyHash = MerkleRoot (merkleHash "")
 
 
 merkleHash :: String -> String
-merkleHash = Crypto.hash Crypto.SHA256
+merkleHash value = Crypto.hash Crypto.SHA256 value
+                 # Crypto.toString
 
 
 -- | Merkle tree height
