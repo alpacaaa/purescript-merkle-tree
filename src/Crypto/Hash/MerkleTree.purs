@@ -69,8 +69,8 @@ instance foldableMerkleNode :: Foldable MerkleNode where
   foldr f a b = Foldable.foldrDefault f a b
   foldl f a b = Foldable.foldlDefault f a b
   foldMap f x = case x of
-    MerkleLeaf{mVal}            -> f mVal
-    MerkleBranch{mLeft, mRight} ->
+    MerkleLeaf   { mVal }            -> f mVal
+    MerkleBranch { mLeft, mRight }   ->
       Foldable.foldMap f mLeft `append` Foldable.foldMap f mRight
 
 
@@ -132,9 +132,9 @@ powerOfTwo n
 mkLeaf :: String -> MerkleNode String
 mkLeaf a =
   MerkleLeaf
-  { mRoot: mkLeafRootHash a
-  , mVal : a
-  }
+    { mRoot: mkLeafRootHash a
+    , mVal : a
+    }
 
 mkLeafRootHash :: String -> MerkleRoot String
 mkLeafRootHash a = MerkleRoot $ merkleHash ("0" <> a)
@@ -146,10 +146,10 @@ nodeRoot (MerkleLeaf { mRoot })   = mRoot
 mkBranch :: forall a. MerkleNode a -> MerkleNode a -> MerkleNode a
 mkBranch a b =
   MerkleBranch
-  { mLeft : a
-  , mRight: b
-  , mRoot : mkRootHash (nodeRoot a) (nodeRoot b)
-  }
+    { mLeft : a
+    , mRight: b
+    , mRoot : mkRootHash (nodeRoot a) (nodeRoot b)
+    }
 
 mkRootHash :: forall a. MerkleRoot a -> MerkleRoot a -> MerkleRoot a
 mkRootHash (MerkleRoot l) (MerkleRoot r) = MerkleRoot $ merkleHash $ ("1" <> l <> r)
@@ -160,7 +160,7 @@ mkMerkleTree Nil = MerkleEmpty
 mkMerkleTree ls  = MerkleTree lsLen (go lsLen ls)
   where
     lsLen              = List.length ls
-    go _  (Cons x Nil) = mkLeaf x
+    go _  (x : Nil) = mkLeaf x
     go len xs = mkBranch (go i l) (go (len - i) r)
       where
         i = powerOfTwo len
@@ -190,8 +190,10 @@ data Side = L | R
 -- The list is ordered such that the for each element, the next element in
 -- the list is the proof element corresponding to the node's parent node.
 merkleProof :: forall a. MerkleTree a -> MerkleRoot a -> MerkleProof a
-merkleProof MerkleEmpty _ = MerkleProof Nil
-merkleProof (MerkleTree _ rootNode) leafRoot = MerkleProof $ constructPath Nil rootNode
+merkleProof MerkleEmpty _ =
+  MerkleProof Nil
+merkleProof (MerkleTree _ rootNode) leafRoot =
+  MerkleProof $ constructPath Nil rootNode
   where
     constructPath :: (ProofList a) -> MerkleNode a -> (ProofList a)
     constructPath pElems (MerkleLeaf leaf)
@@ -217,14 +219,13 @@ validateMerkleProof (MerkleProof proofElems) treeRoot leafRoot =
   where
     validate :: ProofList a -> MerkleRoot a -> Boolean
     validate Nil proofRoot = proofRoot == treeRoot
-    validate (Cons pElem pElems) proofRoot =
+    validate (pElem : pElems) proofRoot =
       let
         (ProofElem proof) = pElem
       in
-      if proofRoot /= proof.nodeRoot then
-        false
-      else
-        validate pElems (hashProofElem pElem)
+      if proofRoot /= proof.nodeRoot
+        then false
+        else validate pElems (hashProofElem pElem)
 
     hashProofElem :: ProofElem a -> MerkleRoot a
     hashProofElem (ProofElem proof) =
